@@ -6,11 +6,12 @@ import time
 from typing import Dict, List, Any
 from datetime import datetime
 
-from strands.agent.agent import Agent
 from strands.tools import tool
-from strands.session.repository_session_manager import RepositorySessionManager
-from flotorch.strands.llm import FlotorchStrandsModel
+from strands.session.repository_session_manager import (
+    RepositorySessionManager
+)
 from flotorch.strands.session import FlotorchStrandsSession
+from flotorch.strands.agent import FlotorchStrandsAgent
 
 from ..core.config import CompanyConfiguration
 from ..knowledge.knowledge_base import KnowledgeBaseClient
@@ -18,82 +19,62 @@ from ..knowledge.knowledge_base import KnowledgeBaseClient
 
 class StrandsAgentManager:
     """Manager for Strands agents."""
-    
-    def __init__(self, aws_region: str = "us-east-1"):
-        """Initialize the Strands Agent Manager."""
-        self._knowledge_client = KnowledgeBaseClient(region_name=aws_region)
-        self._active_agents: Dict[str, Dict[str, Any]] = {}
+
+    def __init__(self, aws_region: str = "us-east-1") -> None:
+        """Initialize the Strands Agent Manager.
         
-        # Flotorch configuration
+        Args:
+            aws_region: AWS region for knowledge base client
+        """
+        self._knowledge_client = KnowledgeBaseClient(
+            region_name=aws_region
+        )
+        self._active_sessions: Dict[str, Dict[str, Any]] = {}
+        self._shared_agent = None
+        self._shared_session_manager = None
+
         self._api_key = os.getenv("FLOTORCH_API_KEY", "")
         self._base_url = os.getenv("FLOTORCH_BASE_URL", "")
-        self._model_id = os.getenv("FLOTORCH_MODEL_ID", "anthropic.claude-3-sonnet-20240229-v1:0")
+        self._model_id = os.getenv(
+            "FLOTORCH_MODEL_ID",
+            "anthropic.claude-3-sonnet-20240229-v1:0"
+        )
     
     def create_new_session(
-        self, 
-        company_key: str, 
-        company_config: CompanyConfiguration, 
+        self,
+        company_key: str,
+        company_config: CompanyConfiguration,
         initial_query: str = None
     ) -> Dict[str, Any]:
-        """Create a new Strands session for a company."""
+        """Create a new Strands session for a company.
+        
+        Args:
+            company_key: Unique identifier for the company
+            company_config: Company configuration object
+            initial_query: Optional initial query for the session
+            
+        Returns:
+            Dictionary containing session creation result
+        """
         try:
-            # Create knowledge tool
-            knowledge_tool = self._create_knowledge_tool(company_config)
-            
-            # Create model and session
-            model = FlotorchStrandsModel(
-                model_id=self._model_id,
-                api_key=self._api_key,
-                base_url=self._base_url,
-            )
-            
-            repository = FlotorchStrandsSession(
-                api_key=self._api_key,
-                base_url=self._base_url
-            )
-            
             session_id = str(uuid.uuid4())
-            session_manager = RepositorySessionManager(
-                session_id=session_id,
-                session_repository=repository
-            )
             
-            # Create system prompt for concise responses
-            system_prompt = """You are a helpful company representative.
+            # Initialize shared agent only once with the session_id
+            if self._shared_agent is None:
+                self._initialize_shared_agent(session_id)
 
-IMPORTANT INSTRUCTIONS:
-- Always provide SHORT, CONCISE answers like ChatGPT
-- Keep responses under 200 words
-- Use the knowledge base tool to get accurate information
-- Give direct answers without unnecessary details
-- Be conversational and helpful
-- If you don't know something, say so clearly
+            session_title = self._generate_session_title(
+                initial_query, company_config.name
+            )
 
-Answer questions using the knowledge base tool when needed."""
-            
-            # Create agent
-            agent = Agent(
-                model=model,
-                tools=[knowledge_tool],
-                session_manager=session_manager,
-                system_prompt=system_prompt
-            )
-            
-            # Store agent info
-            session_title = (
-                initial_query[:50] + "..." 
-                if initial_query and len(initial_query) > 50 
-                else f"Chat with {company_config.name}"
-            )
-            
-            self._active_agents[session_id] = {
-                'agent': agent,
+            # Store session metadata only - no agent recreation
+            self._active_sessions[session_id] = {
                 'company_key': company_key,
                 'company_name': company_config.name,
                 'created_at': time.time(),
                 'session_title': session_title
             }
-            
+
             return {
                 "success": True,
                 "session_id": session_id,
@@ -101,35 +82,60 @@ Answer questions using the knowledge base tool when needed."""
                 "company_key": company_key,
                 "session_title": session_title
             }
-            
+
         except Exception as e:
             return {
                 "success": False,
                 "error": f"Failed to create session: {str(e)}"
             }
     
-    def process_query(self, session_id: str, query: str) -> Dict[str, Any]:
-        """Process a query using an existing session."""
+    def process_query(
+        self,
+        session_id: str,
+        query: str,
+        company_key: str = None,
+        company_config: CompanyConfiguration = None
+    ) -> Dict[str, Any]:
+        """Process a query using an existing session.
+        
+        Args:
+            session_id: Unique identifier for the session
+            query: User query string
+            company_key: Optional company key for context switching
+            company_config: Optional company config for context switching
+            
+        Returns:
+            Dictionary containing query response and metadata
+        """
         try:
-            if session_id not in self._active_agents:
+            if session_id not in self._active_sessions:
                 return {
                     "success": False,
                     "error": "Session not found"
                 }
-            
-            agent_info = self._active_agents[session_id]
-            agent = agent_info['agent']
-            
-            # Process query
-            response = agent(query)
-            
+
+            # Initialize shared agent if not already done
+            if self._shared_agent is None:
+                self._initialize_shared_agent()
+
+            session_info = self._active_sessions[session_id]
+
+            # Update session metadata if company context changed
+            if (company_key and company_config and
+                    session_info['company_key'] != company_key):
+                session_info['company_key'] = company_key
+                session_info['company_name'] = company_config.name
+
+            # Use shared agent - no need to recreate
+            response = self._shared_agent(query)
+
             return {
                 "success": True,
                 "response": str(response),
                 "session_id": session_id,
-                "company_name": agent_info['company_name']
+                "company_name": session_info['company_name']
             }
-            
+
         except Exception as e:
             return {
                 "success": False,
@@ -137,59 +143,86 @@ Answer questions using the knowledge base tool when needed."""
             }
     
     def get_session_information(self, session_id: str) -> Dict[str, Any]:
-        """Get session information."""
-        if session_id not in self._active_agents:
+        """Get session information.
+        
+        Args:
+            session_id: Unique identifier for the session
+            
+        Returns:
+            Dictionary containing session information
+        """
+        if session_id not in self._active_sessions:
             return {
                 "success": False,
                 "error": "Session not found"
             }
-        
-        agent_info = self._active_agents[session_id]
+
+        session_info = self._active_sessions[session_id]
         return {
             "success": True,
             "session_id": session_id,
-            "company_name": agent_info['company_name'],
-            "company_key": agent_info['company_key'],
-            "session_title": agent_info['session_title']
+            "company_name": session_info['company_name'],
+            "company_key": session_info['company_key'],
+            "session_title": session_info['session_title']
         }
-    
+
     def list_active_sessions(self) -> List[Dict[str, Any]]:
-        """List all active sessions."""
+        """List all active sessions.
+        
+        Returns:
+            List of session dictionaries sorted by creation time
+        """
         sessions = []
-        for session_id, agent_info in self._active_agents.items():
+        for session_id, session_info in self._active_sessions.items():
             sessions.append({
                 'session_id': session_id,
-                'company_name': agent_info['company_name'],
-                'company_key': agent_info['company_key'],
-                'session_title': agent_info['session_title'],
-                'created_at': agent_info['created_at'],
-                'created_at_formatted': datetime.fromtimestamp(agent_info['created_at']).strftime('%Y-%m-%d %H:%M')
+                'company_name': session_info['company_name'],
+                'company_key': session_info['company_key'],
+                'session_title': session_info['session_title'],
+                'created_at': session_info['created_at'],
+                'created_at_formatted': datetime.fromtimestamp(
+                    session_info['created_at']
+                ).strftime('%Y-%m-%d %H:%M')
             })
-        
+
         sessions.sort(key=lambda x: x['created_at'], reverse=True)
         return sessions
-    
+
     def switch_to_session(self, session_id: str) -> Dict[str, Any]:
-        """Switch to an existing session."""
-        if session_id not in self._active_agents:
+        """Switch to an existing session.
+        
+        Args:
+            session_id: Unique identifier for the session
+            
+        Returns:
+            Dictionary containing session switch result
+        """
+        if session_id not in self._active_sessions:
             return {
                 "success": False,
                 "error": "Session not found"
             }
-        
-        agent_info = self._active_agents[session_id]
+
+        session_info = self._active_sessions[session_id]
         return {
             "success": True,
             "session_id": session_id,
-            "company_name": agent_info['company_name'],
-            "company_key": agent_info['company_key'],
-            "session_title": agent_info['session_title']
+            "company_name": session_info['company_name'],
+            "company_key": session_info['company_key'],
+            "session_title": session_info['session_title']
         }
-    
+
     def delete_session(self, session_id: str) -> Dict[str, Any]:
-        """Delete a session."""
-        if session_id in self._active_agents:
-            del self._active_agents[session_id]
+        """Delete a session.
+        
+        Args:
+            session_id: Unique identifier for the session
+            
+        Returns:
+            Dictionary containing deletion result
+        """
+        if session_id in self._active_sessions:
+            del self._active_sessions[session_id]
             return {
                 "success": True,
                 "message": "Session deleted successfully"
@@ -200,23 +233,108 @@ Answer questions using the knowledge base tool when needed."""
                 "error": "Session not found"
             }
     
-    def _create_knowledge_tool(self, company_config: CompanyConfiguration):
-        """Create knowledge base tool for a company."""
+    def _initialize_shared_agent(self, session_id: str) -> None:
+        """Initialize the shared agent instance once for all sessions.
+        
+        Args:
+            session_id: Session ID to use for the shared agent
+        """
+        try:
+            # Create a generic knowledge tool that works for all companies
+            knowledge_tool = self._create_generic_knowledge_tool()
+
+            repository = FlotorchStrandsSession(
+                api_key=self._api_key,
+                base_url=self._base_url
+            )
+
+            # Use the provided session_id for the shared agent
+            self._shared_session_manager = RepositorySessionManager(
+                session_id=session_id,
+                session_repository=repository
+            )
+
+            flotorch_client = FlotorchStrandsAgent(
+                agent_name=os.getenv("FLOTORCH_AGENT_NAME"),
+                api_key=os.getenv("FLOTORCH_API_KEY"),
+                base_url=os.getenv("FLOTORCH_BASE_URL"),
+                custom_tools=[knowledge_tool],
+                session_manager=self._shared_session_manager
+            )
+
+            self._shared_agent = flotorch_client.get_agent()
+
+        except Exception as e:
+            raise Exception(f"Failed to initialize shared agent: {str(e)}")
+
+    def _create_generic_knowledge_tool(self):
+        """Create a generic knowledge base tool for all companies.
+        
+        Returns:
+            Configured knowledge tool that works for all companies
+        """
         @tool
         def company_knowledge_tool(query: str) -> str:
-            """Retrieve information about the company from knowledge base. Use this tool to get accurate, up-to-date information about the company."""
+            """Retrieve information from the shared knowledge base.
+            
+            Use this tool to get accurate, up-to-date information.
+            The agent will frame the query properly with company context.
+            
+            Args:
+                query: User query string (already enhanced with context)
+                
+            Returns:
+                Retrieved information or error message
+            """
             try:
-                result = self._knowledge_client.retrieve_company_information(
-                    query, company_config
+                # Use shared knowledge base configuration
+                from ..core.config import CompanyConfiguration
+                shared_config = CompanyConfiguration(
+                    name="Shared",
+                    industry="All",
+                    knowledge_base_id=os.getenv(
+                        "SHARED_KNOWLEDGE_BASE_ID", "shared-kb-id"
+                    ),
+                    source_id=os.getenv(
+                        "KNOWLEDGE_BASE_SOURCE_ID", "shared-source-id"
+                    ),
+                    description="Shared knowledge base"
                 )
                 
+                result = self._knowledge_client.retrieve_company_information(
+                    query, shared_config
+                )
+
                 if result.get('success'):
-                    # Return raw content for agent to process and summarize
-                    return result.get('raw_content', 'No information found.')
+                    return result.get(
+                        'raw_content', 'No information found.'
+                    )
                 else:
-                    return "Unable to retrieve information from knowledge base."
-                    
+                    return ("Unable to retrieve information from "
+                            "knowledge base.")
+
             except Exception as e:
                 return f"Error retrieving information: {str(e)}"
-        
+
         return company_knowledge_tool
+
+    def _generate_session_title(
+        self,
+        initial_query: str,
+        company_name: str
+    ) -> str:
+        """Generate session title from initial query or company name.
+        
+        Args:
+            initial_query: Optional initial query string
+            company_name: Company display name
+            
+        Returns:
+            Generated session title
+        """
+        if initial_query and len(initial_query) > 50:
+            return initial_query[:50] + "..."
+        elif initial_query:
+            return initial_query
+        else:
+            return f"Chat with {company_name}"
