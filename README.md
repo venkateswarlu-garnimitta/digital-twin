@@ -67,7 +67,7 @@ Before running the application, ensure you have the following:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/FloTorch/flotorch-python.git
+git clone https://github.com/venkateswarlu-garnimitta/digital-twin.git
 cd digital_twin
 ```
 
