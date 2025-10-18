@@ -100,12 +100,9 @@ KNOWLEDGE_BASE_SOURCE_ID=your_source_id
 
 # FloTorch Configuration
 FLOTORCH_API_KEY=your_flotorch_api_key
-FLOTORCH_AGENT_ID=your_agent_id
+FLOTORCH_BASE_URL=flotorch_base_url
+FLOTORCH_AGENT_NAME=your_flotorch_agent_name
 
-# Strands Framework Configuration
-STRANDS_FRAMEWORK_ENABLED=true
-STRANDS_AGENT_BUILDER_URL=your_strands_builder_url
-```
 
 ### Knowledge Base Setup
 
