@@ -1,186 +1,243 @@
-# Digital Twin Application
+# Digital Twin Knowledge Base System
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
+[![AWS](https://img.shields.io/badge/AWS-Bedrock-orange.svg)](https://aws.amazon.com/bedrock)
+[![FloTorch](https://img.shields.io/badge/FloTorch-Agent-green.svg)](https://flotorch.cloud)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-AI-powered digital twin chat application that creates intelligent company representatives using AWS Bedrock Knowledge Base and Strands agents.
+## Overview
 
-## 🚀 Features
+The Digital Twin Knowledge Base System is a comprehensive application designed to create intelligent digital representations of companies through advanced knowledge management and AI-powered interactions. The system enables users to query and interact with detailed company information through a conversational interface powered by FloTorch agents and AWS Bedrock knowledge bases.
 
-- **Multi-Company Support**: Chat with different company representatives
-- **Session Management**: Persistent chat sessions with history
-- **Knowledge Base Integration**: AWS Bedrock Knowledge Base for accurate responses
-- **Professional UI**: Clean, modern interface inspired by ChatGPT
-- **Intelligent Responses**: AI-powered responses using Strands agents
+## Key Features
 
-## 📋 Requirements
+- **Multi-Company Knowledge Base**: Supports multiple companies across different industries
+- **AI-Powered Interactions**: Intelligent responses using FloTorch agents and AWS Bedrock
+- **Comprehensive Data Management**: Detailed company profiles with extensive information
+- **Industry-Specific Insights**: Tailored responses based on company industry and context
+- **Scalable Architecture**: Built with modern technologies for performance and reliability
 
-- Python 3.8+
-- AWS Bedrock access
-- Flotorch API access
+## Technology Stack
 
-## 🛠️ Installation
+### Backend Technologies
+- **Python 3.8+**: Core application language
+- **Streamlit**: Web application framework for user interface
+- **AWS Bedrock**: Knowledge base and AI services
+- **FloTorch**: Agent orchestration and workflow management
+- **Pydantic**: Data validation and settings management
 
-### Quick Start
+### AI and Machine Learning
+- **AWS Bedrock Knowledge Bases**: Vector database and retrieval system
+- **FloTorch Gateway**: Agent creation, management, and API gateway
+- **Strands Framework**: Agent building framework for intelligent workflows
+- **Natural Language Processing**: Query understanding and response generation
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd digital-twin
-   ```
+### Data Management
+- **Structured Data Storage**: Company information in organized text formats
+- **Vector Embeddings**: Semantic search and retrieval capabilities
+- **Knowledge Base Integration**: Seamless data ingestion and querying
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Project Structure
 
-3. **Set environment variables**
-   ```bash
-   export SHARED_KNOWLEDGE_BASE_ID="your-knowledge-base-id"
-   export KNOWLEDGE_BASE_SOURCE_ID="your-source-id"
-   export FLOTORCH_API_KEY="your-flotorch-api-key"
-   export FLOTORCH_BASE_URL="your-flotorch-base-url"
-   export FLOTORCH_MODEL_ID="your-model-id"
-   ```
+The project is organized into several key components:
 
-4. **Run the application**
-   ```bash
-   python main.py
-   ```
+- **src/digital_twin/**: Core application source code
+  - **core/**: Configuration and service management
+  - **agents/**: Agent orchestration and management
+  - **knowledge/**: Knowledge base operations
+  - **ui/**: User interface components
 
-### Development Setup
+- **digital_twin/**: Company data storage
+  - **amazon/**: Amazon company information
+  - **walmart/**: Walmart company information
+  - **fissionlabs/**: Fission Labs company information
+  - **aws/**: AWS company information
 
+## Prerequisites
+
+Before running the application, ensure you have the following:
+
+1. **Python 3.8 or higher**
+2. **AWS Account** with Bedrock access
+3. **FloTorch Account** and console access
+4. **Required Python packages** (see requirements.txt)
+
+## Installation
+
+1. Clone the repository:
 ```bash
-# Install development dependencies
-make install-dev
-
-# Setup pre-commit hooks
-make setup
-
-# Run tests
-make test
+git clone https://github.com/FloTorch/flotorch-python.git
+cd digital_twin
 ```
 
-## 🐳 Docker Deployment
-
+2. Create a virtual environment:
 ```bash
-# Using Docker Compose
-docker-compose up -d
-
-# Or using Docker directly
-make docker-build
-make docker-run
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-## 📖 Usage
-
-1. **Select Company**: Choose from TechCorp, FinanceInc, HealthPlus, or RetailMax
-2. **Start Chat**: Click "New Chat" or select a previous conversation
-3. **Ask Questions**: Type questions about the selected company
-4. **Switch Companies**: Change companies while maintaining session context
-5. **Manage Sessions**: View, switch, or delete chat sessions
-
-## 🏗️ Project Structure
-
-```
-digital-twin/
-├── src/
-│   └── digital_twin/          # Main application package
-│       ├── app.py            # Streamlit application
-│       ├── service.py        # Main service layer
-│       ├── agent.py          # Strands agent management
-│       ├── knowledge_base.py # Knowledge base client
-│       └── config.py         # Configuration management
-├── tests/                    # Test suite
-├── docs/                     # Documentation
-├── main.py                   # Application entry point
-├── requirements.txt          # Dependencies
-├── pyproject.toml           # Project configuration
-├── Makefile                 # Development commands
-├── Dockerfile               # Docker configuration
-└── docker-compose.yml       # Docker Compose configuration
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `SHARED_KNOWLEDGE_BASE_ID` | AWS Bedrock Knowledge Base ID | Yes |
-| `KNOWLEDGE_BASE_SOURCE_ID` | Knowledge Base Source ID | Yes |
-| `FLOTORCH_API_KEY` | Flotorch API key | Yes |
-| `FLOTORCH_BASE_URL` | Flotorch base URL | Yes |
-| `FLOTORCH_MODEL_ID` | Flotorch model ID | No |
-| `AWS_REGION` | AWS region | No |
+Create a `.env` file in the project root with the following variables:
 
-### Companies
+```env
+# AWS Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_DEFAULT_REGION=us-east-1
 
-The application supports four companies:
+# Knowledge Base Configuration
+SHARED_KNOWLEDGE_BASE_ID=your_knowledge_base_id
+KNOWLEDGE_BASE_SOURCE_ID=your_source_id
 
-- **TechCorp**: Technology company specializing in software solutions
-- **FinanceInc**: Financial services company providing investment solutions
-- **HealthPlus**: Healthcare company focused on medical innovations
-- **RetailMax**: Retail company with extensive e-commerce operations
+# FloTorch Configuration
+FLOTORCH_API_KEY=your_flotorch_api_key
+FLOTORCH_AGENT_ID=your_agent_id
 
-## 🧪 Development
-
-### Available Commands
-
-```bash
-make help                 # Show all available commands
-make install              # Install the application
-make install-dev          # Install development dependencies
-make test                 # Run tests
-make test-cov             # Run tests with coverage
-make lint                 # Run linting
-make format               # Format code
-make clean                # Clean build artifacts
-make run                  # Run the application
+# Strands Framework Configuration
+STRANDS_FRAMEWORK_ENABLED=true
+STRANDS_AGENT_BUILDER_URL=your_strands_builder_url
 ```
 
-### Code Quality
+### Knowledge Base Setup
 
-The project uses several tools for code quality:
+1. **Upload Company Data**: Ensure all company information files are properly uploaded to your AWS Bedrock knowledge base
+2. **Configure Data Sources**: Set up the knowledge base source with appropriate permissions and access
+3. **Test Knowledge Base**: Verify that queries return accurate results from the uploaded data
 
-- **Black**: Code formatting
-- **Flake8**: Linting
-- **MyPy**: Type checking
-- **Pytest**: Testing
-- **Pre-commit**: Git hooks
+### FloTorch Agent Configuration
 
-## 📚 Documentation
+1. **Access FloTorch Console**: Navigate to https://console.flotorch.cloud/
+2. **Create New Agent**:
+   - Agent Name: `digital-twin`
+   - Agent Goal: `Always provide SHORT, CONCISE answers to fit in a chat interface.`
+   - System Prompt: 
+   ```
+   You are a helpful representative for the company.
 
-Detailed documentation is available in the [docs/](docs/) directory:
+   COMPANY CONTEXT:
+   - You represent the company
+   - The company operates in their respective industry
+   - You have access to company information through the knowledge base
 
-- [Complete Documentation](docs/README.md)
-- [API Reference](docs/README.md#api-reference)
-- [Configuration Guide](docs/README.md#configuration)
+   IMPORTANT INSTRUCTIONS:
+   - Always provide SHORT, CONCISE answers to fit in a chat interface.
+   - Keep responses under 200 words
+   - Use the knowledge base tool to get accurate information about the company
+   - Give direct answers without unnecessary details
+   - Be conversational and helpful
+   - If you don't know something about the company, say so clearly
+   - Always speak as a representative of the company
 
-## 🤝 Contributing
+   Answer questions about the company using the knowledge base tool when needed
+   ```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. **Configure Agent Settings**: Set up appropriate permissions and access controls
+4. **Test Agent**: Verify the agent responds correctly to sample queries
 
-## 📄 License
+### Strands Framework Integration
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The system leverages the **Strands Framework** for building intelligent agents with the following capabilities:
 
-## 🆘 Support
+#### Agent Architecture
+- **Strands Framework**: Core framework for agent development and workflow orchestration
+- **FloTorch Gateway**: API gateway for agent creation, management, and invocation
+- **Knowledge Base Integration**: Seamless connection between agents and AWS Bedrock knowledge bases
+- **Workflow Automation**: Intelligent routing and processing of user queries
 
-For support and questions:
+#### Agent Capabilities
+- **Contextual Understanding**: Agents maintain conversation context and company-specific knowledge
+- **Dynamic Response Generation**: Real-time responses based on knowledge base queries
+- **Multi-turn Conversations**: Support for follow-up questions and extended dialogues
+- **Error Handling**: Graceful handling of unknown queries and system errors
 
-- Open an [issue](https://github.com/your-org/digital-twin/issues)
-- Check the [documentation](docs/README.md)
-- Review the [troubleshooting guide](docs/README.md#troubleshooting)
+#### Development Workflow
+1. **Agent Definition**: Define agent behavior and capabilities using Strands framework
+2. **Knowledge Integration**: Connect agents to relevant company knowledge bases
+3. **Testing & Validation**: Test agent responses and refine behavior
+4. **Deployment**: Deploy agents through FloTorch gateway for production use
 
-## 🙏 Acknowledgments
+## Running the Application
 
-- [Streamlit](https://streamlit.io/) for the web framework
-- [AWS Bedrock](https://aws.amazon.com/bedrock/) for knowledge base
-- [Flotorch](https://flotorch.ai/) for LLM integration
-- [Strands](https://strands.ai/) for agent framework
+1. **Start the Streamlit Application**:
+```bash
+streamlit run main.py
+```
+
+2. **Access the Application**: Open your browser and navigate to the provided local URL (typically http://localhost:8501)
+
+3. **Select Company**: Choose from the available companies (Amazon, Walmart, Fission Labs, AWS)
+
+4. **Start Querying**: Begin asking questions about the selected company
+
+## Usage
+
+### Basic Operations
+
+1. **Company Selection**: Choose a company from the dropdown menu
+2. **Query Input**: Enter your question in the chat interface
+3. **Response Generation**: The system will provide concise, accurate answers based on the knowledge base
+4. **Follow-up Questions**: Continue the conversation with additional queries
+
+### Query Examples
+
+- "What are the main services offered by this company?"
+- "Who are the key executives and leadership team?"
+- "What is the company's financial performance?"
+- "What are the recent partnerships and acquisitions?"
+- "How does the company approach innovation and technology?"
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Knowledge Base Connection Errors**:
+   - Verify AWS credentials and permissions
+   - Check knowledge base ID and source ID
+   - Ensure data is properly uploaded
+
+2. **FloTorch Agent Issues**:
+   - Verify agent configuration in FloTorch console
+   - Check API key and agent ID
+   - Ensure agent has proper permissions
+
+3. **Application Startup Problems**:
+   - Verify all dependencies are installed
+   - Check environment variables
+   - Review application logs for specific errors
+
+### Support
+
+For technical support and troubleshooting:
+1. Check the application logs for detailed error messages
+2. Verify all configuration settings
+3. Ensure all prerequisites are met
+4. Review the FloTorch and AWS documentation
+
+## Contributing
+
+To contribute to this project:
+1. Follow the established code structure and conventions
+2. Ensure all new features are properly tested
+3. Update documentation as needed
+4. Submit pull requests with clear descriptions
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Acknowledgments
+
+- AWS Bedrock for knowledge base services
+- FloTorch for agent orchestration and gateway services
+- Strands Framework for agent building and development
+- Streamlit for the web interface
+- All contributors and supporters of this project

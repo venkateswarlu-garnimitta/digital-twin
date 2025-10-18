@@ -36,33 +36,33 @@ class ConfigurationManager:
         )
 
         self.companies = {
-            "techcorp": CompanyConfiguration(
-                name="TechCorp",
-                industry="IT",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
-                description="Leading technology solutions provider"
-            ),
-            "cloudtech": CompanyConfiguration(
-                name="CloudTech",
-                industry="IT",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
-                description="Cloud computing and infrastructure services"
-            ),
-            "retailmax": CompanyConfiguration(
-                name="RetailMax",
+            "amazon": CompanyConfiguration(
+                name="Amazon",
                 industry="E-commerce",
                 knowledge_base_id=self.kb_id,
                 source_id=self.source_id,
-                description="Online retail and e-commerce platform"
+                description="World's largest online retailer and cloud services provider"
             ),
-            "shopify": CompanyConfiguration(
-                name="Shopify Pro",
+            "walmart": CompanyConfiguration(
+                name="Walmart",
                 industry="E-commerce",
                 knowledge_base_id=self.kb_id,
                 source_id=self.source_id,
-                description="E-commerce solutions and online store builder"
+                description="Multinational retail corporation with extensive e-commerce operations"
+            ),
+            "fissionlabs": CompanyConfiguration(
+                name="Fission Labs",
+                industry="IT",
+                knowledge_base_id=self.kb_id,
+                source_id=self.source_id,
+                description="Technology solutions provider specializing in AI, cloud, and data engineering"
+            ),
+            "aws": CompanyConfiguration(
+                name="Amazon Web Services",
+                industry="IT",
+                knowledge_base_id=self.kb_id,
+                source_id=self.source_id,
+                description="Leading cloud computing platform and services provider"
             )
         }
     
