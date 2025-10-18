@@ -102,7 +102,7 @@ KNOWLEDGE_BASE_SOURCE_ID=your_source_id
 FLOTORCH_API_KEY=your_flotorch_api_key
 FLOTORCH_BASE_URL=flotorch_base_url
 FLOTORCH_AGENT_NAME=your_flotorch_agent_name
-
+```
 
 ### Knowledge Base Setup
 
