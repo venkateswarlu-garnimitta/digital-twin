@@ -59,9 +59,8 @@ class StrandsAgentManager:
         try:
             session_id = str(uuid.uuid4())
             
-            # Initialize shared agent only once with the session_id
-            if self._shared_agent is None:
-                self._initialize_shared_agent(session_id)
+            # Initialize shared agent for each new session to ensure unique session IDs
+            self._initialize_shared_agent(session_id)
 
             session_title = self._generate_session_title(
                 initial_query, company_config.name
@@ -234,7 +233,7 @@ class StrandsAgentManager:
             }
     
     def _initialize_shared_agent(self, session_id: str) -> None:
-        """Initialize the shared agent instance once for all sessions.
+        """Initialize the shared agent instance for each new session.
         
         Args:
             session_id: Session ID to use for the shared agent
