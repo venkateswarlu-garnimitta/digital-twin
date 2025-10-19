@@ -16,11 +16,6 @@ def render_sidebar(service):
         # Title with subtle icon
         st.markdown('<div class="sidebar-title">🧭&nbsp;&nbsp;Navigation</div>', unsafe_allow_html=True)
         
-        # Dark mode toggle
-        if 'dark_mode' not in st.session_state:
-            st.session_state.dark_mode = False
-        st.session_state.dark_mode = st.toggle("🌗  Dark mode", value=st.session_state.dark_mode)
-        
         if service is None:
             st.warning("Backend unavailable")
             return None

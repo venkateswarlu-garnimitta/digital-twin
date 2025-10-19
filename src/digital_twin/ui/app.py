@@ -10,7 +10,6 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.digital_twin.ui.styles import get_custom_css
-from src.digital_twin.ui.styles import get_dark_css
 from src.digital_twin.ui.sidebar import render_sidebar
 from src.digital_twin.ui.utils import initialize_service, load_session_messages, save_message_to_session, clean_html_tags
 
@@ -217,10 +216,6 @@ def main():
                 st.error(f"Exception creating session: {str(e)}")
     
     selected_company_key = render_sidebar(service)
-
-    # If dark mode enabled, inject variable overrides
-    if st.session_state.get("dark_mode", False):
-        st.markdown(get_dark_css(), unsafe_allow_html=True)
     
     # Search page functionality
     if st.session_state.get("show_search", False):

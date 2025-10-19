@@ -608,31 +608,4 @@ def get_custom_css():
     """
 
 
-def get_dark_css():
-    return """
-    <style>
-    /* Dark theme variable overrides and a few component-specific tweaks */
-    :root {
-        --bg: #0f172a; /* slate-900 */
-        --surface: #111827; /* slate-800 */
-        --muted-surface: #0b1220; /* deep panel */
-        --text: #e5e7eb; /* slate-200 */
-        --muted-text: #94a3b8; /* slate-400 */
-        --primary: #10a37f;
-        --primary-600: #0d8f6d;
-        --border: #1f2937; /* slate-700 */
-        --ring: rgba(16, 163, 127, 0.32);
-        --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-        --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.28);
-    }
-
-    /* Code blocks and links in dark */
-    .stMarkdown code { background-color: #1f2937 !important; color: #f87171 !important; }
-    .stMarkdown a { color: var(--primary) !important; }
-
-    /* Scrollbar in dark */
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: #334155; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
-    """
+    # Note: Dark theme helper removed per revert request.
