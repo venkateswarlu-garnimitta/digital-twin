@@ -13,13 +13,20 @@ if str(project_root) not in sys.path:
 def render_sidebar(service):
     """Render the sidebar with all components"""
     with st.sidebar:
-        st.markdown('<div class="sidebar-title">DIGITAL TWIN</div>', unsafe_allow_html=True)
+        # Title with subtle icon
+        st.markdown('<div class="sidebar-title">🧭&nbsp;&nbsp;Navigation</div>', unsafe_allow_html=True)
+        
+        # Dark mode toggle
+        if 'dark_mode' not in st.session_state:
+            st.session_state.dark_mode = False
+        st.session_state.dark_mode = st.toggle("🌗  Dark mode", value=st.session_state.dark_mode)
         
         if service is None:
             st.warning("Backend unavailable")
             return None
         
-        if st.button("New chat", key="new_chat_button_2024", use_container_width=True):
+        # Primary actions with icons
+        if st.button("➕  New chat", key="new_chat_button_2024", use_container_width=True):
             if not st.session_state.get('selected_company_key'):
                 st.markdown('<p style="color: #8e8ea0; font-size: 12px; text-align: center; padding: 8px 12px; background-color: #f8f9fa; border-radius: 6px; border: 1px solid #e5e5e5; margin: 0 auto; width: fit-content;">Please select a company first!</p>', unsafe_allow_html=True)
                 st.rerun()
@@ -38,14 +45,14 @@ def render_sidebar(service):
         if "show_search" not in st.session_state:
             st.session_state.show_search = False
         
-        if st.button("Search chats", key="search_btn", use_container_width=True):
+        if st.button("🔎  Search", key="search_btn", use_container_width=True):
             st.session_state.show_search = not st.session_state.show_search
             st.rerun()
         
         st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
         
         # Industry and company selection
-        st.markdown("**Select Industry**")
+        st.markdown("**Industry**")
         
         if 'selected_industry' not in st.session_state:
             st.session_state.selected_industry = None
@@ -74,7 +81,7 @@ def render_sidebar(service):
             st.session_state.selected_company_key = None
         
         if st.session_state.selected_industry:
-            st.markdown("**Select Company**")
+            st.markdown("**Company**")
             
             companies = service.get_companies_by_industry(st.session_state.selected_industry)
             company_options = {c['name']: c['key'] for c in companies}
@@ -108,7 +115,7 @@ def render_sidebar(service):
         st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
         
         # Chat history section
-        st.markdown('<div class="chat-history-title">CHAT HISTORY</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chat-history-title">History</div>', unsafe_allow_html=True)
         
         st.markdown("""
         <style>

@@ -5,6 +5,23 @@ Styles for Digital Twin Application
 def get_custom_css():
     return """
     <style>
+    /* THEME VARIABLES */
+    :root {
+        --bg: #f7f7fb;
+        --surface: #ffffff;
+        --muted-surface: #fafafa;
+        --text: #1f2937;
+        --muted-text: #6b7280;
+        --primary: #10a37f;
+        --primary-600: #0d8f6d;
+        --border: #e5e7eb;
+        --ring: rgba(16, 163, 127, 0.15);
+        --shadow: 0 4px 16px rgba(17, 24, 39, 0.06);
+        --shadow-soft: 0 2px 10px rgba(17, 24, 39, 0.05);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+    }
     /* Import Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
@@ -15,14 +32,14 @@ def get_custom_css():
     
     /* Main Container */
     .main {
-        background-color: #ffffff;
+        background-color: var(--bg);
         padding: 0;
     }
     
     /* Sidebar Styles */
     [data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #e5e5e5;
+        background-color: var(--surface);
+        border-right: 1px solid var(--border);
     }
     
     [data-testid="stSidebar"] > div:first-child {
@@ -33,34 +50,80 @@ def get_custom_css():
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* FIXED TOP HEADER */
+    .app-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-soft);
+        z-index: 1000;
+        padding: 0 20px;
+    }
+    .app-topbar .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: 0.2px;
+    }
+    .app-topbar .brand .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(16,163,127,0.15), rgba(16,163,127,0.05));
+        border: 1px solid var(--border);
+        color: var(--primary);
+        font-size: 16px;
+    }
+    .app-topbar .meta {
+        color: var(--muted-text);
+        font-size: 12px;
+    }
     
     /* Sidebar Title */
     .sidebar-title {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: 600;
-        color: #202123;
-        padding: 20px 16px;
-        margin-bottom: 10px;
-        text-align: center;
+        color: var(--text);
+        padding: 16px 16px 8px 16px;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     
     /* Sidebar Buttons */
     [data-testid="stSidebar"] .stButton > button {
         background-color: transparent;
-        color: #202123;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        padding: 1px 16px;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 8px 12px;
         font-size: 14px;
-        font-weight: 400;
+        font-weight: 500;
         text-align: left;
-        transition: all 0.2s;
+        transition: transform 0.15s ease, border-color 0.2s, background-color 0.2s;
         width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
     [data-testid="stSidebar"] .stButton > button:hover {
-        background-color: #f7f7f8;
-        border-color: #10a37f;
+        background-color: var(--muted-surface);
+        border-color: var(--primary);
+        transform: translateY(-1px);
     }
     
     [data-testid="stSidebar"] .stButton > button:active {
@@ -70,11 +133,11 @@ def get_custom_css():
     /* Sidebar Text Input (Search) */
     [data-testid="stSidebar"] .stTextInput > div > div > input {
         background-color: #f7f7f8;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         padding: 10px 14px;
         font-size: 14px;
-        color: #202123;
+        color: var(--text);
     }
     
     [data-testid="stSidebar"] .stTextInput > div > div > input:focus {
@@ -88,20 +151,20 @@ def get_custom_css():
     }
     
     .stSelectbox > div > div {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         font-size: 14px;
-        color: #202123;
+        color: var(--text);
     }
     
     /* Chat History Section */
     .chat-history-title {
         font-size: 12px;
-        font-weight: 600;
-        color: #8e8ea0;
+        font-weight: 700;
+        color: var(--muted-text);
         text-transform: uppercase;
-        padding: 20px 16px 8px 16px;
+        padding: 16px 16px 8px 16px;
         letter-spacing: 0.5px;
     }
     
@@ -121,10 +184,22 @@ def get_custom_css():
     
     /* Chat Container */
     .chat-container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 16px 20px 0 20px;
     }
+
+    /* Cards */
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+    .chat-card {
+        padding: 16px 16px 0 16px;
+    }
+    .search-card { padding: 24px; }
     
     /* Center Container for New Chat */
     .center-container {
@@ -139,50 +214,71 @@ def get_custom_css():
     
     .welcome-title {
         font-size: 32px;
-        font-weight: 600;
-        color: #202123;
+        font-weight: 700;
+        color: var(--text);
         margin-top: 80px;
-        margin-bottom: 20px;
+        margin-bottom: 8px;
         text-align: center;
     }
+    .welcome-subtitle { color: var(--muted-text); font-size: 16px; }
     
 
 
     /* Chat Message Styles */
+    .chat-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-end; }
+    .chat-row-user { justify-content: flex-end; }
+    .chat-row-assistant { justify-content: flex-start; }
+
+    .chat-avatar {
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(16,163,127,0.15), rgba(16,163,127,0.03));
+        color: var(--primary);
+        border: 1px solid var(--border);
+        font-size: 16px;
+    }
+
     .chat-message {
-        padding: 20px 24px;
-        margin-bottom: 12px;
-        border-radius: 16px;
-        max-width: 70%;
+        padding: 14px 16px;
+        border-radius: 18px;
+        max-width: 72%;
         word-wrap: break-word;
+        box-shadow: var(--shadow-soft);
+        animation: fadeInUp 240ms ease-out;
     }
     
     .chat-message.user {
-        background-color: #f4f4f4;
         margin-left: auto;
-        margin-right: 0;
-        border: 1px solid #e5e5e5;
-        padding: 10px 16px;
+        background: linear-gradient(160deg, rgba(16,163,127,0.15), rgba(16,163,127,0.06));
+        border: 1px solid rgba(16,163,127,0.25);
+        color: var(--text);
+        backdrop-filter: saturate(1.2);
     }
 
     .chat-message.assistant {
-        background-color: #ffffff;
-        margin-left: 0;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
         margin-right: auto;
-        border: 1px solid #e5e5e5;
+        color: var(--text);
     }
     
     .message-content {
-        color: #202123;
+        color: var(--text);
         font-size: 15px;
         line-height: 1.6;
         white-space: pre-wrap;
         word-break: break-word;
     }
+
+    .message-meta { margin-top: 6px; font-size: 11px; color: var(--muted-text); }
     
     /* Enhanced markdown formatting for assistant responses */
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-        color: #202123;
+        color: var(--text);
         font-weight: 600;
         margin-top: 1.2em;
         margin-bottom: 0.6em;
@@ -233,7 +329,7 @@ def get_custom_css():
     }
     
     .stMarkdown a {
-        color: #10a37f;
+        color: var(--primary);
         text-decoration: none;
         font-weight: 500;
     }
@@ -248,8 +344,8 @@ def get_custom_css():
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e5e5e5 !important;
+        background-color: var(--surface) !important;
+        border-top: 1px solid var(--border) !important;
         padding: 16px 0 !important;
         z-index: 999 !important;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
@@ -258,8 +354,8 @@ def get_custom_css():
     
     /* Center the input within fixed container - consistent width */
     [data-testid="stChatInputContainer"] > div {
-        max-width: 800px !important;
-        width: 800px !important;
+        max-width: 900px !important;
+        width: 900px !important;
         margin: 0 auto !important;
         padding: 0 20px !important;
     }
@@ -270,19 +366,19 @@ def get_custom_css():
     }
     
     .stChatInput > div {
-        background-color: #ffffff !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 12px !important;
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-lg) !important;
         padding: 4px !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: var(--shadow-soft) !important;
     }
     
     .stChatInput textarea {
-        background-color: #ffffff !important;
+        background-color: var(--surface) !important;
         border: none !important;
         padding: 12px 16px !important;
         font-size: 15px !important;
-        color: #202123 !important;
+        color: var(--text) !important;
         min-height: 24px !important;
         max-height: 200px !important;
     }
@@ -293,34 +389,34 @@ def get_custom_css():
     }
     
     .stChatInput > div:focus-within {
-        border-color: #10a37f !important;
-        box-shadow: 0 2px 12px rgba(16, 163, 127, 0.15) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 2px 12px var(--ring) !important;
     }
     
     /* Text Input Styling (for other inputs) */
     .stTextInput > div > div > input {
-        background-color: #ffffff;
-        border: 1px solid #d1d5db;
-        border-radius: 12px;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
         padding: 12px 16px;
         font-size: 15px;
-        color: #202123;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        color: var(--text);
+        box-shadow: var(--shadow-soft);
         transition: all 0.2s;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: #10a37f;
-        box-shadow: 0 2px 12px rgba(16, 163, 127, 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 2px 12px var(--ring);
         outline: none;
     }
     
     /* Main Button Styles */
     .main .stButton > button {
-        background-color: #10a37f;
+        background-color: var(--primary);
         color: #ffffff;
         border: none;
-        border-radius: 8px;
+        border-radius: var(--radius);
         padding: 10px 20px;
         font-size: 14px;
         font-weight: 500;
@@ -328,9 +424,7 @@ def get_custom_css():
         transition: background-color 0.2s;
     }
     
-    .main .stButton > button:hover {
-        background-color: #0d8f6d;
-    }
+    .main .stButton > button:hover { background-color: var(--primary-600); }
     
     /* Scrollbar Styles */
     ::-webkit-scrollbar {
@@ -353,15 +447,12 @@ def get_custom_css():
     
     /* Remove/Adjust Streamlit padding */
     .block-container {
-        padding-top: 2rem;
+        padding-top: 5.5rem; /* room for fixed header */
         padding-bottom: 120px !important; /* Space for fixed input */
     }
     
     /* Divider */
-    .sidebar-divider {
-        border-top: 1px solid #e5e5e5;
-        margin: 16px 0;
-    }
+    .sidebar-divider { border-top: 1px solid var(--border); margin: 16px 0; }
     
     /* Search Modal Input Styling - Match chat input exactly */
     [data-testid="stVerticalBlock"] > div:has(input[placeholder="Type to search your chat history..."]) .stTextInput {
@@ -369,19 +460,19 @@ def get_custom_css():
     }
     
     [data-testid="stVerticalBlock"] > div:has(input[placeholder="Type to search your chat history..."]) .stTextInput > div {
-        background-color: #ffffff !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 12px !important;
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-lg) !important;
         padding: 4px !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: var(--shadow-soft) !important;
     }
     
     [data-testid="stVerticalBlock"] > div:has(input[placeholder="Type to search your chat history..."]) .stTextInput > div > div > input {
-        background-color: #ffffff !important;
+        background-color: var(--surface) !important;
         border: none !important;
         padding: 12px 16px !important;
         font-size: 15px !important;
-        color: #202123 !important;
+        color: var(--text) !important;
         min-height: 24px !important;
         max-height: 200px !important;
         text-align: left !important;
@@ -393,8 +484,8 @@ def get_custom_css():
     }
     
     [data-testid="stVerticalBlock"] > div:has(input[placeholder="Type to search your chat history..."]) .stTextInput > div:focus-within {
-        border-color: #10a37f !important;
-        box-shadow: 0 2px 12px rgba(16, 163, 127, 0.15) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 2px 12px var(--ring) !important;
     }
     
     /* Left align placeholder text */
@@ -404,9 +495,9 @@ def get_custom_css():
     
     /* Chat history items hover effect */
     .chat-history-item:hover {
-        background-color: #f0f0f0 !important;
+        background-color: var(--muted-surface) !important;
         transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: var(--shadow) !important;
     }
     
     /* Back button styling - reduce padding and width */
@@ -425,7 +516,7 @@ def get_custom_css():
         padding: 8px 0 !important;
         margin: 2px 0 !important;
         text-align: left !important;
-        color: #202123 !important;
+        color: var(--text) !important;
         font-size: 14px !important;
         font-weight: 500 !important;
         width: auto !important;
@@ -433,17 +524,14 @@ def get_custom_css():
         max-width: none !important;
     }
     
-    button[key^="search_chat_"]:hover {
-        background-color: #f8f9fa !important;
-        border-radius: 4px !important;
-    }
+    button[key^="search_chat_"]:hover { background-color: var(--muted-surface) !important; border-radius: 6px !important; }
     
     /* Style error messages to match search bar message */
     .stAlert {
-        background-color: #f8f9fa !important;
-        border: 1px solid #e5e5e5 !important;
-        border-radius: 6px !important;
-        color: #8e8ea0 !important;
+        background-color: var(--muted-surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        color: var(--muted-text) !important;
         font-size: 12px !important;
         padding: 8px 12px !important;
         margin: 0 auto !important;
@@ -483,6 +571,68 @@ def get_custom_css():
         padding: 8px 16px !important;
         justify-content: flex-start !important;
     }
+
+    /* SEARCH RESULT CARDS */
+    .search-result-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+        box-shadow: var(--shadow-soft);
+    }
+    .search-result-card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+        [data-testid="stChatInputContainer"] > div { max-width: 720px !important; width: 100% !important; }
+        .chat-container { max-width: 720px; }
+        .chat-message { max-width: 78%; }
+    }
+    @media (max-width: 768px) {
+        .app-topbar { height: 52px; }
+        .block-container { padding-top: 4.5rem; }
+        [data-testid="stChatInputContainer"] > div { max-width: 100% !important; padding: 0 12px !important; }
+        .chat-container { padding: 12px; }
+        .chat-message { max-width: 86%; }
+    }
     
+    </style>
+    """
+
+
+def get_dark_css():
+    return """
+    <style>
+    /* Dark theme variable overrides and a few component-specific tweaks */
+    :root {
+        --bg: #0f172a; /* slate-900 */
+        --surface: #111827; /* slate-800 */
+        --muted-surface: #0b1220; /* deep panel */
+        --text: #e5e7eb; /* slate-200 */
+        --muted-text: #94a3b8; /* slate-400 */
+        --primary: #10a37f;
+        --primary-600: #0d8f6d;
+        --border: #1f2937; /* slate-700 */
+        --ring: rgba(16, 163, 127, 0.32);
+        --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+        --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.28);
+    }
+
+    /* Code blocks and links in dark */
+    .stMarkdown code { background-color: #1f2937 !important; color: #f87171 !important; }
+    .stMarkdown a { color: var(--primary) !important; }
+
+    /* Scrollbar in dark */
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #334155; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
     """
