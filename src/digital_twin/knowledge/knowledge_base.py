@@ -5,7 +5,17 @@ from typing import Dict, Any
 from botocore.exceptions import ClientError
 
 from ..core.config import CompanyConfiguration
+from flotorch.sdk.memory import FlotorchVectorStore
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+vector_store = FlotorchVectorStore(
+    base_url = os.getenv("FLOTORCH_BASE_URL"),
+    api_key = os.getenv("FLOTORCH_API_KEY"),
+    vectorstore_id= os.getenv("VECTOR_STORE_ID")
+)
 
 class KnowledgeBaseClient:
     """Client for retrieving information from AWS Bedrock Knowledge Base."""
@@ -35,71 +45,89 @@ class KnowledgeBaseClient:
             Dictionary containing raw retrieved information and metadata
         """
         try:
-            response = self._client.retrieve(
-                knowledgeBaseId=company_config.knowledge_base_id,
-                retrievalQuery={'text': query},
-                retrievalConfiguration={
-                    'vectorSearchConfiguration': {
-                        'numberOfResults': 5
-                    }
-                }
+            result = vector_store.search(
+                query=query,
+                max_number_of_result=5
             )
+            
+            return self._process_flotorch_results(result, query)
 
-            return self._process_results(response, query)
-
-        except ClientError as e:
-            return {
-                'success': False,
-                'error': f"AWS Error: {e.response['Error']['Message']}",
-                'raw_content': "Unable to retrieve information from knowledge base"
-            }
         except Exception as e:
             return {
                 'success': False,
-                'error': f"Error: {str(e)}",
+                'error': f"Vector Store Error: {str(e)}",
                 'raw_content': "Unable to retrieve information from knowledge base"
             }
     
-    def _process_results(
+    def _process_flotorch_results(
         self,
         response: Dict[str, Any],
         query: str
     ) -> Dict[str, Any]:
-        """Process retrieval results and return raw content.
+        """Process Flotorch Vector Store retrieval results and return raw content.
         
         Args:
-            response: AWS Bedrock retrieval response
+            response: Flotorch Vector Store response
             query: Original user query
             
         Returns:
             Dictionary containing processed results and metadata
         """
-        results = response.get('retrievalResults', [])
+        try:
+            # Extract results from Flotorch Vector Store response
+            results = response.get('data', [])
+            
+            if not results:
+                return {
+                    'success': False,
+                    'error': 'No information found',
+                    'raw_content': 'No information found'
+                }
 
-        if not results:
+            content_parts = []
+            for result in results:
+                # Handle Flotorch Vector Store content format
+                content_data = result.get('content', [])
+                
+                if isinstance(content_data, list):
+                    # Extract text from content list
+                    for content_item in content_data:
+                        if isinstance(content_item, dict) and content_item.get('type') == 'text':
+                            text_content = content_item.get('text', '')
+                            if text_content:
+                                content_parts.append(text_content.strip())
+                elif isinstance(content_data, str):
+                    # Direct string content
+                    content_parts.append(content_data.strip())
+                else:
+                    # Try other possible field names
+                    content = (result.get('text', '') or 
+                              result.get('document', '') or
+                              result.get('page_content', ''))
+                    if content:
+                        content_parts.append(content.strip())
+
+            if not content_parts:
+                return {
+                    'success': False,
+                    'error': 'No relevant content found',
+                    'raw_content': 'No relevant content found'
+                }
+
+            raw_content = "\n\n".join(content_parts)
+
+            return {
+                'success': True,
+                'raw_content': raw_content,
+                'result_count': len(content_parts),
+                'query': query
+            }
+            
+        except Exception as e:
+            print(f"DEBUG: Error processing Flotorch results: {str(e)}")
             return {
                 'success': False,
-                'error': 'No information found',
-                'raw_content': 'No information found'
+                'error': f"Error processing results: {str(e)}",
+                'raw_content': 'Error processing API response'
             }
-
-        content_parts = []
-        for result in results:
-            content = result.get('content', {}).get('text', '')
-            if content:
-                content_parts.append(content.strip())
-
-        if not content_parts:
-            return {
-                'success': False,
-                'error': 'No relevant content found',
-                'raw_content': 'No relevant content found'
-            }
-
-        raw_content = "\n\n".join(content_parts)
-
-        return {
-            'success': True,
-            'raw_content': raw_content,
-            'result_count': len(content_parts)
-        }
+    
