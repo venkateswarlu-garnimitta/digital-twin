@@ -9,14 +9,14 @@ from ..agents.manager import StrandsAgentManager
 class DigitalTwinService:
     """Main service for the Digital Twin application."""
 
-    def __init__(self, aws_region: str = "us-east-1") -> None:
+    def __init__(self) -> None:
         """Initialize the service.
         
         Args:
             aws_region: AWS region for service initialization
         """
         self._config_manager = ConfigurationManager()
-        self._agent_manager = StrandsAgentManager(aws_region=aws_region)
+        self._agent_manager = StrandsAgentManager()
 
     def process_query(
         self,
