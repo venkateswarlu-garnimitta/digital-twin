@@ -67,7 +67,7 @@ Before running the application, ensure you have the following:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/FloTorch/flotorch-python.git
+git clone https://github.com/venkateswarlu-garnimitta/digital-twin.git
 cd digital_twin
 ```
 
@@ -100,11 +100,8 @@ KNOWLEDGE_BASE_SOURCE_ID=your_source_id
 
 # FloTorch Configuration
 FLOTORCH_API_KEY=your_flotorch_api_key
-FLOTORCH_AGENT_ID=your_agent_id
-
-# Strands Framework Configuration
-STRANDS_FRAMEWORK_ENABLED=true
-STRANDS_AGENT_BUILDER_URL=your_strands_builder_url
+FLOTORCH_BASE_URL=flotorch_base_url
+FLOTORCH_AGENT_NAME=your_flotorch_agent_name
 ```
 
 ### Knowledge Base Setup

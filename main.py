@@ -3,7 +3,7 @@
 Digital Twin Application Entry Point.
 
 This is the main entry point for the Digital Twin application.
-Run this file to start the Streamlit application.
+Run this file with: streamlit run main.py
 """
 
 from src.digital_twin.ui.app import main
