@@ -32,7 +32,13 @@ def get_custom_css():
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* Hide sidebar toggle buttons to prevent closing */
+    button[aria-label*="sidebar"], 
+    button[aria-label*="Close"], 
+    button[aria-label*="Open"] {
+        display: none !important;
+    }
     
     /* Sidebar Title */
     .sidebar-title {

@@ -59,9 +59,8 @@ The project is organized into several key components:
 Before running the application, ensure you have the following:
 
 1. **Python 3.8 or higher**
-2. **AWS Account** with Bedrock access
-3. **FloTorch Account** and console access
-4. **Required Python packages** (see requirements.txt)
+2. **FloTorch Account** and console access
+3. **Required Python packages** (see requirements.txt)
 
 ## Installation
 
@@ -89,26 +88,23 @@ pip install -r requirements.txt
 Create a `.env` file in the project root with the following variables:
 
 ```env
-# AWS Configuration
-AWS_ACCESS_KEY_ID=your_aws_access_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-AWS_DEFAULT_REGION=us-east-1
-
-# Knowledge Base Configuration
-SHARED_KNOWLEDGE_BASE_ID=your_knowledge_base_id
-KNOWLEDGE_BASE_SOURCE_ID=your_source_id
-
-# FloTorch Configuration
-FLOTORCH_API_KEY=your_flotorch_api_key
-FLOTORCH_BASE_URL=flotorch_base_url
-FLOTORCH_AGENT_NAME=your_flotorch_agent_name
+# Knowledge Base Configuration (Configure in FloTorch Console)
+# Get these IDs from your FloTorch console knowledge base setup
+# FloTorch Configuration (Get these from FloTorch Console)
+FLOTORCH_API_KEY=your-flotorch-api-key
+FLOTORCH_BASE_URL=your-flotorch-base-url
+FLOTORCH_AGENT_NAME=your-agent-name
+VECTOR_STORE_ID=your_flotorch_vectorstore_id
 ```
 
 ### Knowledge Base Setup
 
-1. **Upload Company Data**: Ensure all company information files are properly uploaded to your AWS Bedrock knowledge base
-2. **Configure Data Sources**: Set up the knowledge base source with appropriate permissions and access
-3. **Test Knowledge Base**: Verify that queries return accurate results from the uploaded data
+1. **Access FloTorch Console**: Navigate to https://console.flotorch.cloud/
+2. **Configure Knowledge Base**:
+   - Create or access your knowledge base in the FloTorch console
+   - Upload company data files to your knowledge base
+   - Configure data sources and indexing
+3. **Update Environment Variables**: Add your FloTorch API key, base URL, agent name and vector store ID to the `.env` file
 
 ### FloTorch Agent Configuration
 
@@ -197,9 +193,9 @@ streamlit run main.py
 ### Common Issues
 
 1. **Knowledge Base Connection Errors**:
-   - Verify AWS credentials and permissions
-   - Check knowledge base ID and source ID
-   - Ensure data is properly uploaded
+   - Verify FloTorch console configuration
+   - Check vector store ID in .env file
+   - Ensure data is properly uploaded to FloTorch knowledge base
 
 2. **FloTorch Agent Issues**:
    - Verify agent configuration in FloTorch console
