@@ -1,6 +1,5 @@
 """Configuration management for Digital Twin application."""
 
-import os
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 
@@ -12,14 +11,10 @@ class CompanyConfiguration:
     Attributes:
         name: Company display name
         industry: Industry category
-        knowledge_base_id: AWS Bedrock knowledge base identifier
-        source_id: Knowledge base source identifier
         description: Company description
     """
     name: str
     industry: str
-    knowledge_base_id: str
-    source_id: str
     description: str
 
 
@@ -28,40 +23,26 @@ class ConfigurationManager:
 
     def __init__(self) -> None:
         """Initialize configuration manager."""
-        self.kb_id = os.getenv(
-            "SHARED_KNOWLEDGE_BASE_ID", "shared-kb-id"
-        )
-        self.source_id = os.getenv(
-            "KNOWLEDGE_BASE_SOURCE_ID", "shared-source-id"
-        )
 
         self.companies = {
             "amazon": CompanyConfiguration(
                 name="Amazon",
                 industry="E-commerce",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
                 description="World's largest online retailer and cloud services provider"
             ),
             "walmart": CompanyConfiguration(
                 name="Walmart",
                 industry="E-commerce",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
                 description="Multinational retail corporation with extensive e-commerce operations"
             ),
             "fissionlabs": CompanyConfiguration(
                 name="Fission Labs",
                 industry="IT",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
                 description="Technology solutions provider specializing in AI, cloud, and data engineering"
             ),
             "aws": CompanyConfiguration(
                 name="Amazon Web Services",
                 industry="IT",
-                knowledge_base_id=self.kb_id,
-                source_id=self.source_id,
                 description="Leading cloud computing platform and services provider"
             )
         }

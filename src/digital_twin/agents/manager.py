@@ -20,15 +20,9 @@ from ..knowledge.knowledge_base import KnowledgeBaseClient
 class StrandsAgentManager:
     """Manager for Strands agents."""
 
-    def __init__(self, aws_region: str = "us-east-1") -> None:
-        """Initialize the Strands Agent Manager.
-        
-        Args:
-            aws_region: AWS region for knowledge base client
-        """
-        self._knowledge_client = KnowledgeBaseClient(
-            region_name=aws_region
-        )
+    def __init__(self) -> None:
+        """Initialize the Strands Agent Manager."""
+        self._knowledge_client = KnowledgeBaseClient()
         self._active_sessions: Dict[str, Dict[str, Any]] = {}
         self._shared_agent = None
         self._shared_session_manager = None
@@ -286,22 +280,8 @@ class StrandsAgentManager:
                 Retrieved information or error message
             """
             try:
-                # Use shared knowledge base configuration
-                from ..core.config import CompanyConfiguration
-                shared_config = CompanyConfiguration(
-                    name="Shared",
-                    industry="All",
-                    knowledge_base_id=os.getenv(
-                        "SHARED_KNOWLEDGE_BASE_ID", "shared-kb-id"
-                    ),
-                    source_id=os.getenv(
-                        "KNOWLEDGE_BASE_SOURCE_ID", "shared-source-id"
-                    ),
-                    description="Shared knowledge base"
-                )
-                
                 result = self._knowledge_client.retrieve_company_information(
-                    query, shared_config
+                    query
                 )
 
                 if result.get('success'):
